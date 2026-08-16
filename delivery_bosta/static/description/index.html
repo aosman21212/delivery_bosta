@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" id="html-root">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Bosta Delivery Integration – Odoo 19</title>
+<style>
+  :root{
+    --orange:#E8470A;--orange-dark:#C03A06;--orange-light:#FF6B35;
+    --dark:#1A1A2E;--grey:#666;--grey-bg:#F5F5F5;--white:#fff;
+    --green:#27AE60;--blue:#2980B9;--purple:#8E44AD;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;color:var(--dark);background:var(--white);line-height:1.6}
+  /* ── language bar ── */
+  #lang-bar{position:sticky;top:0;z-index:999;background:var(--dark);display:flex;justify-content:flex-end;gap:8px;padding:8px 20px}
+  #lang-bar button{border:1px solid #555;background:transparent;color:#ccc;padding:4px 14px;border-radius:20px;cursor:pointer;font-size:13px;transition:.2s}
+  #lang-bar button.active{background:var(--orange);border-color:var(--orange);color:#fff}
+  /* ── panels ── */
+  .panel{display:none}.panel.active{display:block}
+  /* ── hero ── */
+  .hero{background:linear-gradient(135deg,var(--dark) 0%,#2C2C3E 60%,var(--orange-dark) 100%);color:#fff;padding:72px 40px;text-align:center}
+  .hero .badge{display:inline-block;background:var(--orange);color:#fff;border-radius:20px;padding:4px 16px;font-size:13px;font-weight:700;margin-bottom:20px}
+  .hero h1{font-size:42px;font-weight:800;margin-bottom:16px;line-height:1.2}
+  .hero p{font-size:18px;color:#ccc;max-width:680px;margin:0 auto 32px}
+  .hero-pills{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .hero-pill{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:6px 18px;font-size:13px;color:#eee}
+  /* ── sections ── */
+  section{padding:64px 40px;max-width:1100px;margin:0 auto}
+  section h2{font-size:28px;font-weight:700;margin-bottom:8px;color:var(--dark)}
+  section .sub{color:var(--grey);font-size:15px;margin-bottom:40px}
+  /* ── feature grid ── */
+  .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+  .feat-card{border:1px solid #e0e0e0;border-radius:12px;padding:28px;transition:.2s}
+  .feat-card:hover{box-shadow:0 4px 20px rgba(232,71,10,.15);border-color:var(--orange)}
+  .feat-icon{width:48px;height:48px;background:linear-gradient(135deg,var(--orange),var(--orange-light));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px}
+  .feat-card h3{font-size:15px;font-weight:700;margin-bottom:8px}
+  .feat-card p{font-size:13px;color:var(--grey);line-height:1.6}
+  /* ── screenshots ── */
+  .ss-section{background:var(--grey-bg);padding:64px 40px}
+  .ss-section>div{max-width:1100px;margin:0 auto}
+  .ss-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(480px,1fr));gap:24px;margin-top:40px}
+  .ss-item{border-radius:10px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.12);background:#fff}
+  .ss-item img{width:100%;display:block}
+  .ss-caption{padding:14px 18px;font-size:13px;color:var(--grey);font-weight:600;border-top:1px solid #eee}
+  /* ── shipment types ── */
+  .types-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+  .type-card{border-radius:10px;padding:24px;text-align:center}
+  .type-card .code{font-size:28px;font-weight:800;margin-bottom:6px}
+  .type-card h4{font-size:14px;font-weight:700;margin-bottom:6px}
+  .type-card p{font-size:12px;opacity:.85}
+  .t1{background:#FFF5F0;color:var(--orange)}
+  .t2{background:#EBF5FB;color:var(--blue)}
+  .t3{background:#FDFEFE;color:#1ABC9C;border:1px solid #1ABC9C22}
+  .t4{background:#F5EEF8;color:var(--purple)}
+  /* ── setup steps ── */
+  .steps{counter-reset:step}
+  .step{display:flex;gap:24px;margin-bottom:32px;counter-increment:step}
+  .step-num{flex-shrink:0;width:44px;height:44px;background:var(--orange);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800}
+  .step-num::after{content:counter(step)}
+  .step-body h4{font-size:15px;font-weight:700;margin-bottom:4px}
+  .step-body p{font-size:13px;color:var(--grey)}
+  .step-body code{background:#f0f0f0;padding:2px 8px;border-radius:4px;font-size:12px}
+  /* ── status table ── */
+  .status-table{width:100%;border-collapse:collapse;font-size:13px}
+  .status-table th{background:var(--orange);color:#fff;padding:10px 16px;text-align:left}
+  .status-table td{padding:10px 16px;border-bottom:1px solid #eee}
+  .status-table tr:hover td{background:#FFF5F0}
+  .badge-status{display:inline-block;border-radius:12px;padding:2px 12px;font-size:11px;font-weight:700;color:#fff}
+  /* ── footer ── */
+  .footer{background:var(--dark);color:#aaa;text-align:center;padding:40px;font-size:13px}
+  .footer a{color:var(--orange);text-decoration:none}
+  .footer strong{color:#fff}
+
+  /* RTL overrides */
+  [dir="rtl"] .step{flex-direction:row-reverse}
+  [dir="rtl"] .status-table th,[dir="rtl"] .status-table td{text-align:right}
+</style>
+</head>
+<body>
+
+<!-- Language switcher -->
+<div id="lang-bar">
+  <button class="active" onclick="switchLang('en')">English</button>
+  <button onclick="switchLang('ar')">العربية</button>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!--  ENGLISH PANEL                                                          -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<div id="panel-en" class="panel active">
+
+  <div class="hero">
+    <div class="badge">Odoo 19 · Bosta Shipping Integration</div>
+    <h1>🚀 Bosta Delivery — Complete Shipping Solution</h1>
+    <p>End-to-end Bosta courier integration for Odoo 19: create shipments, track parcels, print AWBs, collect COD, and schedule pickups — all without leaving Odoo.</p>
+    <div class="hero-pills">
+      <span class="hero-pill">✅ Odoo 19 Ready</span>
+      <span class="hero-pill">🌍 Egypt · KSA · UAE</span>
+      <span class="hero-pill">📦 4 Shipment Types</span>
+      <span class="hero-pill">💰 COD Support</span>
+      <span class="hero-pill">🖨 AWB Printing</span>
+      <span class="hero-pill">🔔 Live Tracking</span>
+    </div>
+  </div>
+
+  <section>
+    <h2>Key Features</h2>
+    <p class="sub">Everything you need to ship with Bosta — fully embedded in Odoo</p>
+    <div class="features">
+
+      <div class="feat-card">
+        <div class="feat-icon">🚚</div>
+        <h3>Select Bosta on Sales Orders</h3>
+        <p>Choose Bosta as the shipping carrier directly on the Sale Order. Configure shipment type, package size, COD, and open-package inspection per order.</p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">⚡</div>
+        <h3>Auto Shipment Creation</h3>
+        <p>When you validate a delivery order, Bosta creates the shipment automatically via API. Shipment ID and tracking number are saved back to the delivery record.</p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">🖨</div>
+        <h3>Air Waybill (AWB) Printing</h3>
+        <p>Download and print the official Bosta AWB PDF with one click. The label is attached to the delivery order and stored in Odoo for future reference.</p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">📡</div>
+        <h3>Real-Time Tracking</h3>
+        <p>Refresh the shipment status directly from Bosta's API. Track from Created → Picked Up → In Transit → Out for Delivery → Delivered, with chatter history.</p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">💰</div>
+        <h3>Cash on Delivery (COD)</h3>
+        <p>Enable COD on any shipment and specify the amount to collect. The COD value is transmitted to Bosta automatically during shipment creation.</p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">📅</div>
+        <h3>Schedule Courier Pickup</h3>
+        <p>Open the pickup wizard to schedule a Bosta courier pickup for one or multiple orders. Specify date, time slot, contact person, and address.</p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">❌</div>
+        <h3>Cancel Shipments &amp; Pickups</h3>
+        <p>Cancel Bosta shipments or scheduled pickups from Odoo with a single action. The cancellation is reflected in both systems instantly.</p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">🔗</div>
+        <h3>Smart Sale Order Button</h3>
+        <p>A smart button on the sale order shows live Bosta tracking status. Click to drill down into the delivery order for full shipment details.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Screenshots -->
+  <div class="ss-section">
+    <div>
+      <h2>Screenshots</h2>
+      <p class="sub">See the integration in action</p>
+      <div class="ss-grid">
+        <div class="ss-item">
+          <img src="screenshot_01_carrier.png" alt="Bosta Carrier Configuration"/>
+          <div class="ss-caption">1 — Carrier Configuration: API key, environment, and shipment defaults</div>
+        </div>
+        <div class="ss-item">
+          <img src="screenshot_02_picking.png" alt="Delivery Order Bosta Tab"/>
+          <div class="ss-caption">2 — Delivery Order: Bosta tab with shipment options, info, and actions</div>
+        </div>
+        <div class="ss-item">
+          <img src="screenshot_03_tracking.png" alt="Shipment Tracking Timeline"/>
+          <div class="ss-caption">3 — Live Tracking: visual timeline with real-time status from Bosta API</div>
+        </div>
+        <div class="ss-item">
+          <img src="screenshot_04_wizard.png" alt="Schedule Pickup Wizard"/>
+          <div class="ss-caption">4 — Pickup Wizard: schedule a Bosta courier for multiple deliveries</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shipment types -->
+  <section>
+    <h2>Supported Shipment Types</h2>
+    <p class="sub">Four Bosta shipment types fully supported</p>
+    <div class="types-grid">
+      <div class="type-card t1">
+        <div class="code">10</div>
+        <h4>SEND</h4>
+        <p>Standard parcel delivery to your customer</p>
+      </div>
+      <div class="type-card t2">
+        <div class="code">15</div>
+        <h4>CASH_COLLECTION</h4>
+        <p>Collect cash payment from customer without a parcel</p>
+      </div>
+      <div class="type-card t3">
+        <div class="code">25</div>
+        <h4>CUSTOMER_RETURN</h4>
+        <p>Pick up a return shipment from the customer</p>
+      </div>
+      <div class="type-card t4">
+        <div class="code">30</div>
+        <h4>EXCHANGE</h4>
+        <p>Deliver a new item and collect the old one simultaneously</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Setup -->
+  <section style="background:var(--grey-bg);max-width:100%;padding:64px 40px">
+   <div style="max-width:1100px;margin:0 auto">
+    <h2>Quick Setup Guide</h2>
+    <p class="sub">Be live with Bosta in under 5 minutes</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>Install the Module</h4>
+          <p>Go to <strong>Apps</strong>, search for <code>delivery_bosta</code>, and click <strong>Install</strong>. The Bosta carrier is created automatically.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>Enter Your API Key</h4>
+          <p>Navigate to <strong>Inventory → Configuration → Delivery Carriers → Bosta</strong>. Paste your Bosta API key and select Production or Staging.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>Test the Connection</h4>
+          <p>Click <strong>"✓ Test Connection"</strong> to verify your API key is valid before going live.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>Set Defaults</h4>
+          <p>Choose your default shipment type (SEND / EXCHANGE…) and package size (SMALL / MEDIUM / LARGE / X_LARGE) on the carrier form.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>Create a Sale Order</h4>
+          <p>On a Sales Order, select <strong>Bosta</strong> as the delivery carrier. Adjust per-order options such as COD amount, open-package inspection, and shipment type.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>Validate &amp; Ship</h4>
+          <p>Validate the delivery order. Bosta creates the shipment instantly. Download the AWB, track the parcel, and schedule a pickup — all from Odoo.</p>
+        </div>
+      </div>
+    </div>
+   </div>
+  </section>
+
+  <!-- Status map -->
+  <section>
+    <h2>Shipment Status Reference</h2>
+    <p class="sub">Bosta status codes mapped to Odoo</p>
+    <table class="status-table">
+      <thead><tr><th>Code</th><th>Status</th><th>Odoo Label</th></tr></thead>
+      <tbody>
+        <tr><td>10</td><td><span class="badge-status" style="background:#95A5A6">●</span> Created</td><td>created</td></tr>
+        <tr><td>20</td><td><span class="badge-status" style="background:#3498DB">●</span> Received by Bosta</td><td>received</td></tr>
+        <tr><td>30</td><td><span class="badge-status" style="background:var(--blue)">●</span> In Transit</td><td>in_transit</td></tr>
+        <tr><td>40</td><td><span class="badge-status" style="background:var(--orange)">●</span> Out for Delivery</td><td>out_delivery</td></tr>
+        <tr><td>45</td><td><span class="badge-status" style="background:#F39C12">●</span> Waiting for Action</td><td>waiting</td></tr>
+        <tr><td>50</td><td><span class="badge-status" style="background:var(--green)">●</span> Delivered</td><td>delivered</td></tr>
+        <tr><td>60</td><td><span class="badge-status" style="background:#E67E22">●</span> Exception</td><td>exception</td></tr>
+        <tr><td>70</td><td><span class="badge-status" style="background:#E74C3C">●</span> Cancelled</td><td>cancelled</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="footer">
+    <p><strong>Bosta Delivery Integration</strong> for Odoo 19</p>
+    <p style="margin-top:8px">Developed by <a href="https://leapai.ai">leapai.ai</a> · Support: <a href="mailto:abdzoro89@gmail.com">abdzoro89@gmail.com</a></p>
+    <p style="margin-top:8px;font-size:11px">Licensed under LGPL-3 · Compatible with Odoo 19.0</p>
+  </div>
+
+</div><!-- /panel-en -->
+
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!--  ARABIC PANEL                                                           -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<div id="panel-ar" class="panel" dir="rtl" style="font-family:'Segoe UI',Tahoma,Arial,sans-serif">
+
+  <div class="hero">
+    <div class="badge">أودو 19 · تكامل شحن بوستا</div>
+    <h1>🚀 بوستا للتوصيل — حل شحن متكامل</h1>
+    <p>تكامل كامل مع شركة بوستا للشحن في أودو 19: إنشاء شحنات، تتبع الطرود، طباعة بوالص الشحن، تحصيل الدفع عند التسليم، وجدولة الاستلام — كل ذلك من داخل أودو.</p>
+    <div class="hero-pills">
+      <span class="hero-pill">✅ أودو 19</span>
+      <span class="hero-pill">🌍 مصر · السعودية · الإمارات</span>
+      <span class="hero-pill">📦 4 أنواع شحن</span>
+      <span class="hero-pill">💰 الدفع عند التسليم</span>
+      <span class="hero-pill">🖨 طباعة بوليصة الشحن</span>
+      <span class="hero-pill">🔔 تتبع فوري</span>
+    </div>
+  </div>
+
+  <section>
+    <h2>المميزات الرئيسية</h2>
+    <p class="sub">كل ما تحتاجه للشحن مع بوستا — مدمج بالكامل في أودو</p>
+    <div class="features">
+
+      <div class="feat-card">
+        <div class="feat-icon">🚚</div>
+        <h3>اختيار بوستا في أوامر البيع</h3>
+        <p>اختر بوستا كناقل شحن مباشرةً من أمر البيع. حدد نوع الشحنة، حجم الحزمة، الدفع عند التسليم، وخيار الفحص قبل القبول لكل طلب.</p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">⚡</div>
+        <h3>إنشاء شحنة تلقائي</h3>
+        <p>عند التحقق من أمر التوصيل، تُنشئ بوستا الشحنة تلقائياً عبر الـ API. يُحفظ معرّف الشحنة ورقم التتبع مباشرةً في سجل التوصيل.</p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">🖨</div>
+        <h3>طباعة بوليصة الشحن (AWB)</h3>
+        <p>نزّل واطبع بوليصة الشحن الرسمية من بوستا بنقرة واحدة. يُرفق الملصق بأمر التوصيل ويُخزَّن في أودو للرجوع إليه لاحقاً.</p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">📡</div>
+        <h3>تتبع فوري للشحنات</h3>
+        <p>حدّث حالة الشحنة مباشرةً من API بوستا. تابع من "تم الإنشاء" ← "تم الاستلام" ← "في الطريق" ← "خارج للتسليم" ← "تم التسليم" مع سجل في المحادثة.</p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">💰</div>
+        <h3>الدفع عند التسليم (COD)</h3>
+        <p>فعّل خيار الدفع عند التسليم لأي شحنة وحدد المبلغ المراد تحصيله. يُرسَل المبلغ تلقائياً إلى بوستا عند إنشاء الشحنة.</p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">📅</div>
+        <h3>جدولة استلام المندوب</h3>
+        <p>افتح معالج الاستلام لجدولة مندوب بوستا لاستلام طلب واحد أو أكثر. حدد التاريخ، الفترة الزمنية، جهة الاتصال، والعنوان.</p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">❌</div>
+        <h3>إلغاء الشحنات والاستلام</h3>
+        <p>ألغِ شحنات بوستا أو مواعيد الاستلام من أودو بإجراء واحد. يظهر الإلغاء فورياً في كلا النظامين.</p>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">🔗</div>
+        <h3>زر التتبع في أمر البيع</h3>
+        <p>يعرض زر ذكي في أمر البيع حالة التتبع الحية من بوستا. انقر للدخول إلى أمر التوصيل وعرض تفاصيل الشحنة الكاملة.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Screenshots (AR) -->
+  <div class="ss-section">
+    <div>
+      <h2>لقطات الشاشة</h2>
+      <p class="sub">شاهد التكامل في العمل</p>
+      <div class="ss-grid">
+        <div class="ss-item">
+          <img src="screenshot_01_carrier.png" alt="إعداد ناقل بوستا"/>
+          <div class="ss-caption">1 — إعداد الناقل: مفتاح API، البيئة، والإعدادات الافتراضية للشحن</div>
+        </div>
+        <div class="ss-item">
+          <img src="screenshot_02_picking.png" alt="أمر التوصيل - تبويب بوستا"/>
+          <div class="ss-caption">2 — أمر التوصيل: تبويب بوستا مع خيارات الشحنة، المعلومات، والإجراءات</div>
+        </div>
+        <div class="ss-item">
+          <img src="screenshot_03_tracking.png" alt="تتبع الشحنة"/>
+          <div class="ss-caption">3 — التتبع الحي: جدول زمني مرئي مع الحالة الفورية من API بوستا</div>
+        </div>
+        <div class="ss-item">
+          <img src="screenshot_04_wizard.png" alt="معالج جدولة الاستلام"/>
+          <div class="ss-caption">4 — معالج الاستلام: جدولة مندوب بوستا لتسليمات متعددة</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shipment types AR -->
+  <section>
+    <h2>أنواع الشحن المدعومة</h2>
+    <p class="sub">أربعة أنواع شحن من بوستا مدعومة بالكامل</p>
+    <div class="types-grid">
+      <div class="type-card t1">
+        <div class="code">10</div>
+        <h4>SEND — إرسال</h4>
+        <p>تسليم طرد قياسي إلى عميلك</p>
+      </div>
+      <div class="type-card t2">
+        <div class="code">15</div>
+        <h4>CASH_COLLECTION — تحصيل</h4>
+        <p>تحصيل مبلغ نقدي من العميل دون طرد</p>
+      </div>
+      <div class="type-card t3">
+        <div class="code">25</div>
+        <h4>CUSTOMER_RETURN — إرجاع</h4>
+        <p>استلام شحنة مُرجَعة من العميل</p>
+      </div>
+      <div class="type-card t4">
+        <div class="code">30</div>
+        <h4>EXCHANGE — تبادل</h4>
+        <p>تسليم منتج جديد واستلام القديم في نفس الوقت</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Setup AR -->
+  <section style="background:var(--grey-bg);max-width:100%;padding:64px 40px">
+   <div style="max-width:1100px;margin:0 auto">
+    <h2>دليل الإعداد السريع</h2>
+    <p class="sub">ابدأ الشحن مع بوستا في أقل من 5 دقائق</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>تثبيت الوحدة</h4>
+          <p>انتقل إلى <strong>التطبيقات</strong>، ابحث عن <code>delivery_bosta</code>، ثم انقر <strong>تثبيت</strong>. يُنشأ ناقل بوستا تلقائياً.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>إدخال مفتاح API</h4>
+          <p>انتقل إلى <strong>المخزون ← الإعدادات ← ناقلات التوصيل ← بوستا</strong>. الصق مفتاح API واختر بيئة الإنتاج أو الاختبار.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>اختبار الاتصال</h4>
+          <p>انقر <strong>"✓ اختبار الاتصال"</strong> للتحقق من صحة مفتاح API قبل البدء.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>ضبط الإعدادات الافتراضية</h4>
+          <p>اختر نوع الشحنة الافتراضي (SEND / EXCHANGE…) وحجم الحزمة (SMALL / MEDIUM / LARGE / X_LARGE) في نموذج الناقل.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>إنشاء أمر البيع</h4>
+          <p>في أمر البيع، اختر <strong>بوستا</strong> كناقل شحن. اضبط خيارات كل طلب: مبلغ الدفع عند التسليم، الفحص قبل القبول، ونوع الشحنة.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>التحقق والشحن</h4>
+          <p>تحقق من أمر التوصيل. تُنشئ بوستا الشحنة فوراً. نزّل بوليصة الشحن، تابع الطرد، وجدّل الاستلام — كل ذلك من أودو.</p>
+        </div>
+      </div>
+    </div>
+   </div>
+  </section>
+
+  <!-- Status table AR -->
+  <section>
+    <h2>مرجع حالات الشحنة</h2>
+    <p class="sub">رموز حالة بوستا مع مقابلها في أودو</p>
+    <table class="status-table">
+      <thead><tr><th>الرمز</th><th>الحالة</th><th>التسمية في أودو</th></tr></thead>
+      <tbody>
+        <tr><td>10</td><td><span class="badge-status" style="background:#95A5A6">●</span> تم الإنشاء</td><td>created</td></tr>
+        <tr><td>20</td><td><span class="badge-status" style="background:#3498DB">●</span> تم الاستلام من بوستا</td><td>received</td></tr>
+        <tr><td>30</td><td><span class="badge-status" style="background:var(--blue)">●</span> في الطريق</td><td>in_transit</td></tr>
+        <tr><td>40</td><td><span class="badge-status" style="background:var(--orange)">●</span> خارج للتسليم</td><td>out_delivery</td></tr>
+        <tr><td>45</td><td><span class="badge-status" style="background:#F39C12">●</span> في انتظار إجراء</td><td>waiting</td></tr>
+        <tr><td>50</td><td><span class="badge-status" style="background:var(--green)">●</span> تم التسليم</td><td>delivered</td></tr>
+        <tr><td>60</td><td><span class="badge-status" style="background:#E67E22">●</span> استثناء</td><td>exception</td></tr>
+        <tr><td>70</td><td><span class="badge-status" style="background:#E74C3C">●</span> ملغي</td><td>cancelled</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="footer">
+    <p><strong>تكامل بوستا للتوصيل</strong> مع أودو 19</p>
+    <p style="margin-top:8px">من تطوير <a href="https://leapai.ai">leapai.ai</a> · الدعم الفني: <a href="mailto:abdzoro89@gmail.com">abdzoro89@gmail.com</a></p>
+    <p style="margin-top:8px;font-size:11px">رخصة LGPL-3 · متوافق مع أودو 19.0</p>
+  </div>
+
+</div><!-- /panel-ar -->
+
+<script>
+function switchLang(lang){
+  document.getElementById('panel-en').classList.toggle('active', lang==='en');
+  document.getElementById('panel-ar').classList.toggle('active', lang==='ar');
+  document.getElementById('html-root').setAttribute('dir', lang==='ar'?'rtl':'ltr');
+  document.getElementById('html-root').setAttribute('lang', lang);
+  document.querySelectorAll('#lang-bar button').forEach(b=>{
+    b.classList.toggle('active', b.textContent.includes(lang==='en'?'English':'العربية'));
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Action to trigger AWB download from the report menu -->
+    <record id="action_report_bosta_awb" model="ir.actions.server">
+        <field name="name">Print Bosta AWB</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">
+if records:
+    for picking in records.filtered(lambda p: p.is_bosta_carrier and p.bosta_shipment_id):
+        picking.action_bosta_get_awb()
+        </field>
+    </record>
+
+</odoo>

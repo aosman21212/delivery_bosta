@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Extend the delivery order (stock.picking) form -->
+    <record id="view_stock_picking_form_bosta" model="ir.ui.view">
+        <field name="name">stock.picking.form.bosta</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Smart button: Bosta tracking (only when shipment exists) -->
+            <div name="button_box" position="inside">
+                <button name="action_bosta_open_tracking"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-truck"
+                        invisible="not bosta_tracking_number">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Bosta</span>
+                        <span class="o_stat_value o_text-ellipsis" style="max-width:90px">
+                            <field name="bosta_tracking_number" readonly="1"/>
+                        </span>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Add Bosta tab after the "Additional Info" tab -->
+            <page name="extra" position="after">
+                <page string="🚚 Bosta" name="bosta_info"
+                      invisible="not is_bosta_carrier">
+
+                    <!-- Hidden compute field -->
+                    <field name="is_bosta_carrier" invisible="1"/>
+
+                    <!-- ── Shipment Options (before sending) ── -->
+                    <group string="📦 Shipment Options"
+                           invisible="bosta_shipment_id">
+                        <group>
+                            <field name="bosta_shipment_type"/>
+                            <field name="bosta_package_size"/>
+                            <field name="bosta_weight"/>
+                        </group>
+                        <group>
+                            <field name="bosta_is_cod"/>
+                            <field name="bosta_cod_amount"
+                                   invisible="not bosta_is_cod"
+                                   required="bosta_is_cod"/>
+                            <field name="bosta_open_package"/>
+                        </group>
+                        <group col="2">
+                            <field name="bosta_notes" colspan="2"/>
+                        </group>
+                    </group>
+
+                    <!-- ── Shipment Info (after sending) ── -->
+                    <group string="📋 Shipment Information"
+                           invisible="not bosta_shipment_id">
+                        <group>
+                            <field name="bosta_shipment_id" readonly="1"/>
+                            <field name="bosta_tracking_number" readonly="1"/>
+                            <field name="bosta_status" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="bosta_tracking_url" widget="url" readonly="1"/>
+                            <field name="bosta_pickup_id" readonly="1"
+                                   invisible="not bosta_pickup_id"/>
+                        </group>
+                    </group>
+
+                    <!-- ── AWB / Label ── -->
+                    <group string="🖨 Air Waybill (AWB)"
+                           invisible="not bosta_shipment_id">
+                        <group>
+                            <field name="bosta_awb_attachment_id" readonly="1"
+                                   invisible="not bosta_awb_attachment_id"/>
+                        </group>
+                        <group>
+                            <div class="o_row" invisible="not bosta_shipment_id">
+                                <button name="action_bosta_get_awb"
+                                        type="object"
+                                        string="⬇ Download AWB"
+                                        class="btn btn-outline-primary btn-sm me-2"/>
+                                <button name="action_bosta_print_awb"
+                                        type="object"
+                                        string="🖨 Print AWB"
+                                        class="btn btn-outline-secondary btn-sm"
+                                        invisible="not bosta_awb_attachment_id"/>
+                            </div>
+                        </group>
+                    </group>
+
+                    <!-- ── Actions ── -->
+                    <group string="⚡ Actions" invisible="not bosta_shipment_id">
+                        <div class="o_row">
+                            <button name="action_bosta_update_status"
+                                    type="object"
+                                    string="🔄 Refresh Status"
+                                    class="btn btn-outline-info btn-sm me-2"/>
+                            <button name="action_bosta_open_tracking"
+                                    type="object"
+                                    string="🔗 Track on Bosta"
+                                    class="btn btn-outline-secondary btn-sm me-2"/>
+                            <button name="action_bosta_schedule_pickup"
+                                    type="object"
+                                    string="📅 Schedule Pickup"
+                                    class="btn btn-outline-success btn-sm"/>
+                        </div>
+                    </group>
+
+                    <!-- Pre-shipment: schedule pickup early -->
+                    <group invisible="bosta_shipment_id">
+                        <div class="alert alert-info" role="alert">
+                            <i class="fa fa-info-circle me-1"/>
+                            Validate the delivery order to create the Bosta shipment automatically.
+                        </div>
+                    </group>
+
+                </page>
+            </page>
+
+        </field>
+    </record>
+
+    <!-- List view: add Bosta columns -->
+    <record id="view_picking_list_bosta" model="ir.ui.view">
+        <field name="name">stock.picking.list.bosta</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.vpicktree"/>
+        <field name="arch" type="xml">
+            <field name="carrier_tracking_ref" position="after">
+                <field name="bosta_tracking_number"
+                       optional="show"
+                       string="Bosta Tracking"
+                       readonly="1"/>
+                <field name="bosta_status"
+                       optional="show"
+                       string="Bosta Status"
+                       readonly="1"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

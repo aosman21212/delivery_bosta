@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         Window Actions
+    ══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- All Bosta delivery orders (stock.picking with Bosta carrier) -->
+    <record id="action_bosta_delivery_orders" model="ir.actions.act_window">
+        <field name="name">Bosta Shipments</field>
+        <field name="res_model">stock.picking</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('carrier_id.delivery_type', '=', 'bosta')]</field>
+        <field name="context">{
+            'search_default_todo': 1,
+            'default_picking_type_code': 'outgoing'
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Bosta shipments found
+            </p>
+            <p>
+                Assign a <b>Bosta</b> carrier to a delivery order to see it here.
+            </p>
+        </field>
+    </record>
+
+    <!-- Bosta delivery orders — ready to send (confirmed, not yet done) -->
+    <record id="action_bosta_pending_shipments" model="ir.actions.act_window">
+        <field name="name">Pending Shipments</field>
+        <field name="res_model">stock.picking</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[
+            ('carrier_id.delivery_type', '=', 'bosta'),
+            ('state', 'not in', ['done', 'cancel'])
+        ]</field>
+        <field name="context">{'default_picking_type_code': 'outgoing'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No pending Bosta shipments
+            </p>
+            <p>All shipments are dispatched or cancelled.</p>
+        </field>
+    </record>
+
+    <!-- Delivered / completed Bosta shipments -->
+    <record id="action_bosta_done_shipments" model="ir.actions.act_window">
+        <field name="name">Delivered Shipments</field>
+        <field name="res_model">stock.picking</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[
+            ('carrier_id.delivery_type', '=', 'bosta'),
+            ('state', '=', 'done')
+        ]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No completed Bosta shipments yet
+            </p>
+        </field>
+    </record>
+
+    <!-- Bosta carrier configuration -->
+    <record id="action_bosta_carriers" model="ir.actions.act_window">
+        <field name="name">Bosta Carrier Settings</field>
+        <field name="res_model">delivery.carrier</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('delivery_type', '=', 'bosta')]</field>
+        <field name="context">{'default_delivery_type': 'bosta'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Bosta carrier configured yet
+            </p>
+            <p>
+                Click <b>New</b> to add your Bosta API credentials
+                and configure shipment defaults.
+            </p>
+        </field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         Main App Menu  (appears in the Odoo Home / App Switcher)
+    ══════════════════════════════════════════════════════════════════════ -->
+
+    <menuitem id="menu_bosta_root"
+              name="leap Bosta Delivery"
+              web_icon="delivery_bosta,static/description/icon.png"
+              sequence="75"/>
+
+    <!-- ── Shipments ──────────────────────────────────────────────────── -->
+
+    <menuitem id="menu_bosta_shipments"
+              name="Shipments"
+              parent="menu_bosta_root"
+              sequence="10"/>
+
+    <menuitem id="menu_bosta_all_shipments"
+              name="All Shipments"
+              parent="menu_bosta_shipments"
+              action="action_bosta_delivery_orders"
+              sequence="10"/>
+
+    <menuitem id="menu_bosta_pending"
+              name="Pending / In Transit"
+              parent="menu_bosta_shipments"
+              action="action_bosta_pending_shipments"
+              sequence="20"/>
+
+    <menuitem id="menu_bosta_done"
+              name="Delivered"
+              parent="menu_bosta_shipments"
+              action="action_bosta_done_shipments"
+              sequence="30"/>
+
+    <!-- ── Configuration ─────────────────────────────────────────────── -->
+
+    <menuitem id="menu_bosta_config"
+              name="Configuration"
+              parent="menu_bosta_root"
+              sequence="90"/>
+
+    <menuitem id="menu_bosta_config_carriers"
+              name="Bosta Carrier"
+              parent="menu_bosta_config"
+              action="action_bosta_carriers"
+              sequence="10"/>
+
+</odoo>

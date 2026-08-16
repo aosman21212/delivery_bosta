@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Bosta shipping service product -->
+    <record id="product_bosta_shipping" model="product.product">
+        <field name="name">Bosta Shipping</field>
+        <field name="type">service</field>
+        <field name="list_price">0.0</field>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="invoice_policy">order</field>
+    </record>
+
+    <!-- Pre-created Bosta shipping method (noupdate so customers can customise it) -->
+    <record id="delivery_bosta_carrier" model="delivery.carrier">
+        <field name="name">Bosta</field>
+        <field name="delivery_type">bosta</field>
+        <field name="product_id" ref="product_bosta_shipping"/>
+        <field name="bosta_environment">prod</field>
+        <field name="bosta_default_shipment_type">10</field>
+        <field name="bosta_default_package_size">MEDIUM</field>
+        <field name="bosta_default_open_package" eval="False"/>
+        <field name="integration_level">rate_and_ship</field>
+        <field name="active" eval="True"/>
+    </record>
+
+</odoo>

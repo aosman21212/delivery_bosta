@@ -1,0 +1,246 @@
+# Arabic translation for delivery_bosta
+# Copyright (C) 2024 leapai.ai
+# License LGPL-3 or later (http://www.gnu.org/licenses/lgpl).
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2024-08-11 00:00+0000\n"
+"Last-Translator: leapai.ai <abdzoro89@gmail.com>\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+# Carrier
+msgid "Bosta Delivery Integration"
+msgstr "تكامل بوستا للشحن"
+
+msgid "Bosta Shipping Carrier | تكامل شركة بوستا للشحن"
+msgstr "ناقل الشحن بوستا | تكامل شركة بوستا للشحن"
+
+msgid "Bosta"
+msgstr "بوستا"
+
+msgid "API Key"
+msgstr "مفتاح API"
+
+msgid "Environment"
+msgstr "البيئة"
+
+msgid "Production"
+msgstr "الإنتاج"
+
+msgid "Staging / Test"
+msgstr "الاختبار / التجربة"
+
+msgid "Default Shipment Type"
+msgstr "نوع الشحنة الافتراضي"
+
+msgid "Default Package Size"
+msgstr "حجم الحزمة الافتراضي"
+
+msgid "Allow Open-Package by Default"
+msgstr "السماح بفتح الحزمة افتراضياً"
+
+msgid "Test Connection"
+msgstr "اختبار الاتصال"
+
+msgid "Bosta API Credentials"
+msgstr "بيانات API بوستا"
+
+msgid "Shipment Defaults"
+msgstr "الإعدادات الافتراضية للشحن"
+
+# Shipment types
+msgid "SEND — Standard Shipment"
+msgstr "SEND — شحن قياسي"
+
+msgid "CASH_COLLECTION — Collect Payment"
+msgstr "CASH_COLLECTION — تحصيل مبلغ"
+
+msgid "CUSTOMER_RETURN — Return from Customer"
+msgstr "CUSTOMER_RETURN — إرجاع من العميل"
+
+msgid "EXCHANGE — Exchange Product"
+msgstr "EXCHANGE — استبدال منتج"
+
+# Package sizes
+msgid "Small"
+msgstr "صغير"
+
+msgid "Medium"
+msgstr "متوسط"
+
+msgid "Large"
+msgstr "كبير"
+
+msgid "X-Large"
+msgstr "كبير جداً"
+
+# Picking fields
+msgid "Shipment Type"
+msgstr "نوع الشحنة"
+
+msgid "Package Size"
+msgstr "حجم الحزمة"
+
+msgid "Weight (kg)"
+msgstr "الوزن (كجم)"
+
+msgid "Cash on Delivery"
+msgstr "الدفع عند التسليم"
+
+msgid "COD Amount"
+msgstr "مبلغ الدفع عند التسليم"
+
+msgid "Allow Open Package"
+msgstr "السماح بفتح الحزمة"
+
+msgid "Shipment Notes"
+msgstr "ملاحظات الشحنة"
+
+msgid "Bosta Shipment ID"
+msgstr "معرّف شحنة بوستا"
+
+msgid "Tracking Number"
+msgstr "رقم التتبع"
+
+msgid "Tracking URL"
+msgstr "رابط التتبع"
+
+msgid "Shipment Status"
+msgstr "حالة الشحنة"
+
+msgid "AWB Attachment"
+msgstr "مرفق بوليصة الشحن"
+
+msgid "Bosta Pickup ID"
+msgstr "معرّف الاستلام بوستا"
+
+msgid "Bosta Shipment"
+msgstr "شحنة بوستا"
+
+msgid "Shipment Options"
+msgstr "خيارات الشحنة"
+
+msgid "Shipment Info"
+msgstr "معلومات الشحنة"
+
+msgid "AWB"
+msgstr "بوليصة الشحن"
+
+msgid "Actions"
+msgstr "الإجراءات"
+
+# Shipment statuses
+msgid "Created"
+msgstr "تم الإنشاء"
+
+msgid "Received by Bosta"
+msgstr "تم الاستلام من بوستا"
+
+msgid "In Transit"
+msgstr "في الطريق"
+
+msgid "Out for Delivery"
+msgstr "خارج للتسليم"
+
+msgid "Waiting for Customer Action"
+msgstr "في انتظار إجراء العميل"
+
+msgid "Delivered"
+msgstr "تم التسليم"
+
+msgid "Exception"
+msgstr "استثناء"
+
+msgid "Cancelled / Terminated"
+msgstr "ملغي / منتهي"
+
+# Actions on picking
+msgid "Update Bosta Status"
+msgstr "تحديث حالة بوستا"
+
+msgid "Get AWB"
+msgstr "الحصول على بوليصة الشحن"
+
+msgid "Print AWB"
+msgstr "طباعة بوليصة الشحن"
+
+msgid "Schedule Pickup"
+msgstr "جدولة الاستلام"
+
+msgid "Track Shipment"
+msgstr "تتبع الشحنة"
+
+msgid "Cancel Shipment"
+msgstr "إلغاء الشحنة"
+
+msgid "Print Bosta AWB"
+msgstr "طباعة بوليصة شحن بوستا"
+
+# Wizard
+msgid "Schedule Bosta Pickup"
+msgstr "جدولة استلام بوستا"
+
+msgid "Delivery Orders"
+msgstr "أوامر التوصيل"
+
+msgid "Pickup Date"
+msgstr "تاريخ الاستلام"
+
+msgid "From Time"
+msgstr "من الساعة"
+
+msgid "To Time"
+msgstr "إلى الساعة"
+
+msgid "Contact Person"
+msgstr "الشخص المسؤول"
+
+msgid "Contact Phone"
+msgstr "رقم الهاتف"
+
+msgid "Pickup Address"
+msgstr "عنوان الاستلام"
+
+msgid "Notes"
+msgstr "ملاحظات"
+
+msgid "Schedule Pickup"
+msgstr "جدولة الاستلام"
+
+# Notifications / messages
+msgid "Connection Successful"
+msgstr "تم الاتصال بنجاح"
+
+msgid "Bosta API connection is working correctly."
+msgstr "اتصال API بوستا يعمل بشكل صحيح."
+
+msgid "Connection Failed"
+msgstr "فشل الاتصال"
+
+msgid "Pickup Scheduled"
+msgstr "تم جدولة الاستلام"
+
+msgid "Bosta pickup scheduled successfully."
+msgstr "تم جدولة استلام بوستا بنجاح."
+
+msgid "No Bosta Shipment"
+msgstr "لا توجد شحنة بوستا"
+
+msgid "This delivery has no Bosta shipment to track."
+msgstr "لا توجد شحنة بوستا لهذا التوصيل."
+
+msgid "Shipment created via Bosta API. Tracking: %s"
+msgstr "تم إنشاء الشحنة عبر API بوستا. رقم التتبع: %s"
+
+msgid "Shipment cancelled via Bosta API."
+msgstr "تم إلغاء الشحنة عبر API بوستا."
+
+# Sale order
+msgid "Bosta Tracking Info"
+msgstr "معلومات تتبع بوستا"
