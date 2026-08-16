@@ -1,4 +1,4 @@
-# Arabic translation for delivery_bosta
+# Arabic translation for leap_delivery_bosta
 # Copyright (C) 2024 leapai.ai
 # License LGPL-3 or later (http://www.gnu.org/licenses/lgpl).
 msgid ""

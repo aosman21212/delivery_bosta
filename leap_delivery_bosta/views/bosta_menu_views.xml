@@ -83,7 +83,7 @@
 
     <menuitem id="menu_bosta_root"
               name="leap Bosta Delivery"
-              web_icon="delivery_bosta,static/description/icon.png"
+              web_icon="leap_delivery_bosta,static/description/icon.png"
               sequence="75"/>
 
     <!-- ── Shipments ──────────────────────────────────────────────────── -->
